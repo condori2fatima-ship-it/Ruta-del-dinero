@@ -216,14 +216,13 @@ st.divider()
 if st.button("Calcular mi plan de ahorro"):
     st.session_state.calculado = True
 
-st.session_state.objetivo = objetivo
-st.session_state.monto_objetivo = monto_objetivo
-st.session_state.plazo_meses = plazo_meses
-st.session_state.ingreso_mensual = ingreso_mensual
-st.session_state.gastos_mensuales = gastos_mensuales
-st.session_state.perfil = perfil
-st.session_state.simbolo = simbolo
-
+    st.session_state.objetivo = objetivo
+    st.session_state.monto_objetivo = monto_objetivo
+    st.session_state.plazo_meses = plazo_meses
+    st.session_state.ingreso_mensual = ingreso_mensual
+    st.session_state.gastos_mensuales = gastos_mensuales
+    st.session_state.perfil = perfil
+    st.session_state.simbolo = simbolo
 
     if objetivo.strip() == "":
         st.error("Por favor ingresá un objetivo de ahorro.")
