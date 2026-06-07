@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import math
+import plotly.graph_objects as go
 
 # ---------------- CONFIGURACIÓN ----------------
 
@@ -9,6 +10,8 @@ st.set_page_config(
     page_icon="💰",
     layout="wide"
 )
+if "calculado" not in st.session_state:
+    st.session_state.calculado = False
 
 # ---------------- ESTILOS ----------------
 
@@ -211,6 +214,16 @@ st.divider()
 # ---------------- CÁLCULO ----------------
 
 if st.button("Calcular mi plan de ahorro"):
+    st.session_state.calculado = True
+
+st.session_state.objetivo = objetivo
+st.session_state.monto_objetivo = monto_objetivo
+st.session_state.plazo_meses = plazo_meses
+st.session_state.ingreso_mensual = ingreso_mensual
+st.session_state.gastos_mensuales = gastos_mensuales
+st.session_state.perfil = perfil
+st.session_state.simbolo = simbolo
+
 
     if objetivo.strip() == "":
         st.error("Por favor ingresá un objetivo de ahorro.")
@@ -323,23 +336,40 @@ if st.button("Calcular mi plan de ahorro"):
 
         st.markdown('<div class="section-title">📊 Simulador de escenarios</div>', unsafe_allow_html=True)
 
-        escenario_ahorro_extra = st.slider(
-            "Simulá un aumento del ahorro mensual (%)",
-            min_value=0,
-            max_value=50,
-            value=10,
-            step=5
-        )
+st.sidebar.header("🎛️ Centro de simulación")
 
-        escenario_reduccion_gastos = st.slider(
-            "Simulá una reducción de gastos (%)",
-            min_value=0,
-            max_value=50,
-            value=10,
-            step=5
-        )
+        escenario_ahorro_extra = st.sidebar.slider(
+    "Aumentar ahorro mensual (%)",
+    min_value=0,
+    max_value=50,
+    value=10,
+    step=5
+)
 
-        ahorro_extra = ahorro_segun_porcentaje * (1 + escenario_ahorro_extra / 100)
+        escenario_reduccion_gastos = st.sidebar.slider(
+    "Reducir gastos (%)",
+    min_value=0,
+    max_value=50,
+    value=10,
+    step=5
+)
+
+ingreso_extra = st.sidebar.slider(
+    "Ingreso adicional mensual",
+    min_value=0,
+    max_value=500000,
+    value=0,
+    step=10000
+)
+
+        nuevo_ingreso = ingreso_mensual + ingreso_extra
+
+ahorro_extra = (
+    nuevo_ingreso *
+    (porcentaje_ahorro_elegido / 100)
+) * (
+    1 + escenario_ahorro_extra / 100
+)
         gastos_reducidos = gastos_mensuales * (1 - escenario_reduccion_gastos / 100)
         nuevo_disponible = ingreso_mensual - gastos_reducidos
 
@@ -355,11 +385,68 @@ if st.button("Calcular mi plan de ahorro"):
             "Objetivo": [monto_objetivo] * plazo_meses
         })
 
-        st.line_chart(
-            datos_proyeccion,
-            x="Mes",
-            y=["Ahorro actual", "Ahorro con mejora", "Objetivo"]
-        )
+fig = go.Figure()
+
+fig.add_trace(
+    go.Scatter(
+        x=datos_proyeccion["Mes"],
+        y=datos_proyeccion["Ahorro actual"],
+        mode="lines",
+        name="Ahorro actual"
+    )
+)
+
+fig.add_trace(
+    go.Scatter(
+        x=datos_proyeccion["Mes"],
+        y=datos_proyeccion["Ahorro con mejora"],
+        mode="lines",
+        name="Escenario mejorado"
+    )
+)
+
+fig.add_trace(
+    go.Scatter(
+        x=datos_proyeccion["Mes"],
+        y=datos_proyeccion["Objetivo"],
+        mode="lines",
+        name="Objetivo"
+    )
+)
+
+fig.update_layout(
+    paper_bgcolor="#f5f1ea",
+    plot_bgcolor="#ffffff",
+    height=500
+)
+
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
+
+st.markdown(
+    '<div class="section-title">🎯 Probabilidad de éxito</div>',
+    unsafe_allow_html=True
+)
+
+probabilidad = min(
+    int((ahorro_extra / ahorro_necesario) * 100),
+    100
+)
+
+st.progress(probabilidad)
+
+st.write(
+    f"Probabilidad estimada de alcanzar el objetivo: {probabilidad}%"
+)
+
+if probabilidad >= 100:
+    st.success("Alta probabilidad de éxito.")
+elif probabilidad >= 70:
+    st.warning("Probabilidad moderada.")
+else:
+    st.error("Probabilidad baja.")
 
         st.divider()
 
@@ -382,7 +469,34 @@ if st.button("Calcular mi plan de ahorro"):
             ]
         })
 
-        st.bar_chart(datos_comparacion, x="Concepto", y="Monto")
+       fig_bar = go.Figure()
+
+fig_bar.add_trace(
+    go.Bar(
+        x=datos_comparacion["Concepto"],
+        y=datos_comparacion["Monto"],
+        text=[
+            formato_moneda(valor, simbolo)
+            for valor in datos_comparacion["Monto"]
+        ],
+        textposition="outside",
+        name="Monto"
+    )
+)
+
+fig_bar.update_layout(
+    title="Comparación financiera mensual",
+    paper_bgcolor="#f5f1ea",
+    plot_bgcolor="#ffffff",
+    height=500,
+    xaxis_title="Concepto",
+    yaxis_title=f"Monto ({simbolo})"
+)
+
+st.plotly_chart(
+    fig_bar,
+    use_container_width=True
+)
 
         st.divider()
 
@@ -488,15 +602,67 @@ if st.button("Calcular mi plan de ahorro"):
             "Objetivo": [monto_objetivo] * plazo_meses
         })
 
-        st.line_chart(
-            datos_inversion,
-            x="Mes",
-            y=["Ahorro sin invertir", "Ahorro invertido", "Objetivo"]
-        )
+       fig_inversion = go.Figure()
 
+# Línea ahorro sin invertir
+fig_inversion.add_trace(
+    go.Scatter(
+        x=datos_inversion["Mes"],
+        y=datos_inversion["Ahorro sin invertir"],
+        mode="lines",
+        name="Ahorro sin invertir",
+        line=dict(
+            color="#6C757D",
+            width=3
+        )
+    )
+)
+
+# Línea ahorro invertido
+fig_inversion.add_trace(
+    go.Scatter(
+        x=datos_inversion["Mes"],
+        y=datos_inversion["Ahorro invertido"],
+        mode="lines",
+        name="Ahorro invertido",
+        line=dict(
+            color="#D4A373",
+            width=4
+        )
+    )
+)
+# Línea objetivo
+fig_inversion.add_trace(
+    go.Scatter(
+        x=datos_inversion["Mes"],
+        y=datos_inversion["Objetivo"],
+        mode="lines",
+        name="Objetivo",
+        line=dict(
+            color="#2E8B57",
+            width=3,
+            dash="dash"
+        )
+    )
+)
+
+fig_inversion.update_layout(
+    title="Evolución del ahorro con inversión",
+    paper_bgcolor="#f5f1ea",
+    plot_bgcolor="#ffffff",
+    height=550,
+    xaxis_title="Mes",
+    yaxis_title=f"Monto ({simbolo})",
+    hovermode="x unified"
+)
+
+st.plotly_chart(
+    fig_inversion,
+    use_container_width=True
+)
         st.caption(
             "Las tasas utilizadas son estimativas y sirven para simular escenarios. "
             "No constituyen asesoramiento financiero profesional."
         )
 
-        st.success("Gracias por usar Ruta Ahorro 💰")
+        st.success("Gracias por usar Ruta Ahorro 💰")       
