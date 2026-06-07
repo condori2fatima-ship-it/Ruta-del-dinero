@@ -333,124 +333,143 @@ if st.button("Calcular mi plan de ahorro"):
 
         # ---------------- SIMULADOR ----------------
 
-        st.markdown('<div class="section-title">📊 Simulador de escenarios</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-title">📊 Simulador de escenarios</div>',
+            unsafe_allow_html=True
+        )
 
-st.sidebar.header("🎛️ Centro de simulación")
+        st.sidebar.header("🎛️ Centro de simulación")
 
         escenario_ahorro_extra = st.sidebar.slider(
-    "Aumentar ahorro mensual (%)",
-    min_value=0,
-    max_value=50,
-    value=10,
-    step=5
-)
+            "Aumentar ahorro mensual (%)",
+            min_value=0,
+            max_value=50,
+            value=10,
+            step=5
+        )
 
         escenario_reduccion_gastos = st.sidebar.slider(
-    "Reducir gastos (%)",
-    min_value=0,
-    max_value=50,
-    value=10,
-    step=5
-)
+            "Reducir gastos (%)",
+            min_value=0,
+            max_value=50,
+            value=10,
+            step=5
+        )
 
-ingreso_extra = st.sidebar.slider(
-    "Ingreso adicional mensual",
-    min_value=0,
-    max_value=500000,
-    value=0,
-    step=10000
-)
+        ingreso_extra = st.sidebar.slider(
+            "Ingreso adicional mensual",
+            min_value=0,
+            max_value=500000,
+            value=0,
+            step=10000
+        )
 
         nuevo_ingreso = ingreso_mensual + ingreso_extra
 
-ahorro_extra = (
-    nuevo_ingreso *
-    (porcentaje_ahorro_elegido / 100)
-) * (
-    1 + escenario_ahorro_extra / 100
-)
-        gastos_reducidos = gastos_mensuales * (1 - escenario_reduccion_gastos / 100)
-        nuevo_disponible = ingreso_mensual - gastos_reducidos
+        ahorro_extra = (
+            nuevo_ingreso *
+            (porcentaje_ahorro_elegido / 100)
+        ) * (
+            1 + escenario_ahorro_extra / 100
+        )
 
-        st.write("**Ahorro mensual con aumento simulado:**", formato_moneda(ahorro_extra, simbolo))
-        st.write("**Dinero disponible si reducís gastos:**", formato_moneda(nuevo_disponible, simbolo))
+        gastos_reducidos = gastos_mensuales * (
+            1 - escenario_reduccion_gastos / 100
+        )
+
+        nuevo_disponible = nuevo_ingreso - gastos_reducidos
+
+        st.write(
+            "**Ahorro mensual con aumento simulado:**",
+            formato_moneda(ahorro_extra, simbolo)
+        )
+
+        st.write(
+            "**Dinero disponible si reducís gastos:**",
+            formato_moneda(nuevo_disponible, simbolo)
+        )
 
         meses = list(range(1, plazo_meses + 1))
 
         datos_proyeccion = pd.DataFrame({
             "Mes": meses,
-            "Ahorro actual": [ahorro_segun_porcentaje * mes for mes in meses],
-            "Ahorro con mejora": [ahorro_extra * mes for mes in meses],
+            "Ahorro actual": [
+                ahorro_segun_porcentaje * mes
+                for mes in meses
+            ],
+            "Ahorro con mejora": [
+                ahorro_extra * mes
+                for mes in meses
+            ],
             "Objetivo": [monto_objetivo] * plazo_meses
         })
 
-fig = go.Figure()
+        fig = go.Figure()
 
-fig.add_trace(
-    go.Scatter(
-        x=datos_proyeccion["Mes"],
-        y=datos_proyeccion["Ahorro actual"],
-        mode="lines",
-        name="Ahorro actual"
-    )
-)
+        fig.add_trace(
+            go.Scatter(
+                x=datos_proyeccion["Mes"],
+                y=datos_proyeccion["Ahorro actual"],
+                mode="lines",
+                name="Ahorro actual"
+            )
+        )
 
-fig.add_trace(
-    go.Scatter(
-        x=datos_proyeccion["Mes"],
-        y=datos_proyeccion["Ahorro con mejora"],
-        mode="lines",
-        name="Escenario mejorado"
-    )
-)
+        fig.add_trace(
+            go.Scatter(
+                x=datos_proyeccion["Mes"],
+                y=datos_proyeccion["Ahorro con mejora"],
+                mode="lines",
+                name="Escenario mejorado"
+            )
+        )
 
-fig.add_trace(
-    go.Scatter(
-        x=datos_proyeccion["Mes"],
-        y=datos_proyeccion["Objetivo"],
-        mode="lines",
-        name="Objetivo"
-    )
-)
+        fig.add_trace(
+            go.Scatter(
+                x=datos_proyeccion["Mes"],
+                y=datos_proyeccion["Objetivo"],
+                mode="lines",
+                name="Objetivo"
+            )
+        )
 
-fig.update_layout(
-    paper_bgcolor="#f5f1ea",
-    plot_bgcolor="#ffffff",
-    height=500
-)
+        fig.update_layout(
+            paper_bgcolor="#f5f1ea",
+            plot_bgcolor="#ffffff",
+            height=500
+        )
 
-st.plotly_chart(
-    fig,
-    use_container_width=True
-)
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 
-st.markdown(
-    '<div class="section-title">🎯 Probabilidad de éxito</div>',
-    unsafe_allow_html=True
-)
+        st.markdown(
+            '<div class="section-title">🎯 Probabilidad de éxito</div>',
+            unsafe_allow_html=True
+        )
 
-probabilidad = min(
-    int((ahorro_extra / ahorro_necesario) * 100),
-    100
-)
+        probabilidad = min(
+            int((ahorro_extra / ahorro_necesario) * 100),
+            100
+        )
 
-st.progress(probabilidad)
+        st.progress(probabilidad)
 
-st.write(
-    f"Probabilidad estimada de alcanzar el objetivo: {probabilidad}%"
-)
+        st.write(
+            f"Probabilidad estimada de alcanzar el objetivo: {probabilidad}%"
+        )
 
-if probabilidad >= 100:
-    st.success("Alta probabilidad de éxito.")
-elif probabilidad >= 70:
-    st.warning("Probabilidad moderada.")
-else:
-    st.error("Probabilidad baja.")
+        if probabilidad >= 100:
+            st.success("Alta probabilidad de éxito.")
+        elif probabilidad >= 70:
+            st.warning("Probabilidad moderada.")
+        else:
+            st.error("Probabilidad baja.")
 
         st.divider()
 
         # ---------------- COMPARACIÓN ----------------
-
         st.markdown('<div class="section-title">📊 Comparación mensual</div>', unsafe_allow_html=True)
 
         datos_comparacion = pd.DataFrame({
