@@ -470,7 +470,11 @@ if st.button("Calcular mi plan de ahorro"):
         st.divider()
 
         # ---------------- COMPARACIÓN ----------------
-        st.markdown('<div class="section-title">📊 Comparación mensual</div>', unsafe_allow_html=True)
+
+        st.markdown(
+            '<div class="section-title">📊 Comparación mensual</div>',
+            unsafe_allow_html=True
+        )
 
         datos_comparacion = pd.DataFrame({
             "Concepto": [
@@ -487,40 +491,42 @@ if st.button("Calcular mi plan de ahorro"):
             ]
         })
 
-       fig_bar = go.Figure()
+        fig_bar = go.Figure()
 
-fig_bar.add_trace(
-    go.Bar(
-        x=datos_comparacion["Concepto"],
-        y=datos_comparacion["Monto"],
-        text=[
-            formato_moneda(valor, simbolo)
-            for valor in datos_comparacion["Monto"]
-        ],
-        textposition="outside",
-        name="Monto"
-    )
-)
+        fig_bar.add_trace(
+            go.Bar(
+                x=datos_comparacion["Concepto"],
+                y=datos_comparacion["Monto"],
+                text=[
+                    formato_moneda(valor, simbolo)
+                    for valor in datos_comparacion["Monto"]
+                ],
+                textposition="outside",
+                name="Monto"
+            )
+        )
 
-fig_bar.update_layout(
-    title="Comparación financiera mensual",
-    paper_bgcolor="#f5f1ea",
-    plot_bgcolor="#ffffff",
-    height=500,
-    xaxis_title="Concepto",
-    yaxis_title=f"Monto ({simbolo})"
-)
+        fig_bar.update_layout(
+            title="Comparación financiera mensual",
+            paper_bgcolor="#f5f1ea",
+            plot_bgcolor="#ffffff",
+            height=500,
+            xaxis_title="Concepto",
+            yaxis_title=f"Monto ({simbolo})"
+        )
 
-st.plotly_chart(
-    fig_bar,
-    use_container_width=True
-)
+        st.plotly_chart(
+            fig_bar,
+            use_container_width=True
+        )
 
         st.divider()
-
         # ---------------- INVERSIÓN ----------------
 
-        st.markdown('<div class="section-title">📈 Inversión según perfil y mercado</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-title">📈 Inversión según perfil y mercado</div>',
+            unsafe_allow_html=True
+        )
 
         tasas_mercado = {
             "Billetera remunerada": 0.28,
@@ -529,7 +535,6 @@ st.plotly_chart(
             "Bonos": 0.55,
             "CEDEARs / Acciones": 0.75
         }
-
         if perfil == "Conservador":
             opciones_recomendadas = [
                 "Billetera remunerada",
@@ -620,67 +625,65 @@ st.plotly_chart(
             "Objetivo": [monto_objetivo] * plazo_meses
         })
 
-       fig_inversion = go.Figure()
+        fig_inversion = go.Figure()
 
-# Línea ahorro sin invertir
-fig_inversion.add_trace(
-    go.Scatter(
-        x=datos_inversion["Mes"],
-        y=datos_inversion["Ahorro sin invertir"],
-        mode="lines",
-        name="Ahorro sin invertir",
-        line=dict(
-            color="#6C757D",
-            width=3
+        fig_inversion.add_trace(
+            go.Scatter(
+                x=datos_inversion["Mes"],
+                y=datos_inversion["Ahorro sin invertir"],
+                mode="lines",
+                name="Ahorro sin invertir",
+                line=dict(
+                    color="#6C757D",
+                    width=3
+                )
+            )
         )
-    )
-)
 
-# Línea ahorro invertido
-fig_inversion.add_trace(
-    go.Scatter(
-        x=datos_inversion["Mes"],
-        y=datos_inversion["Ahorro invertido"],
-        mode="lines",
-        name="Ahorro invertido",
-        line=dict(
-            color="#D4A373",
-            width=4
+        fig_inversion.add_trace(
+            go.Scatter(
+                x=datos_inversion["Mes"],
+                y=datos_inversion["Ahorro invertido"],
+                mode="lines",
+                name="Ahorro invertido",
+                line=dict(
+                    color="#D4A373",
+                    width=4
+                )
+            )
         )
-    )
-)
-# Línea objetivo
-fig_inversion.add_trace(
-    go.Scatter(
-        x=datos_inversion["Mes"],
-        y=datos_inversion["Objetivo"],
-        mode="lines",
-        name="Objetivo",
-        line=dict(
-            color="#2E8B57",
-            width=3,
-            dash="dash"
+
+        fig_inversion.add_trace(
+            go.Scatter(
+                x=datos_inversion["Mes"],
+                y=datos_inversion["Objetivo"],
+                mode="lines",
+                name="Objetivo",
+                line=dict(
+                    color="#2E8B57",
+                    width=3,
+                    dash="dash"
+                )
+            )
         )
-    )
-)
 
-fig_inversion.update_layout(
-    title="Evolución del ahorro con inversión",
-    paper_bgcolor="#f5f1ea",
-    plot_bgcolor="#ffffff",
-    height=550,
-    xaxis_title="Mes",
-    yaxis_title=f"Monto ({simbolo})",
-    hovermode="x unified"
-)
+        fig_inversion.update_layout(
+            title="Evolución del ahorro con inversión",
+            paper_bgcolor="#f5f1ea",
+            plot_bgcolor="#ffffff",
+            height=550,
+            xaxis_title="Mes",
+            yaxis_title=f"Monto ({simbolo})",
+            hovermode="x unified"
+        )
 
-st.plotly_chart(
-    fig_inversion,
-    use_container_width=True
-)
-        st.caption(
+        st.plotly_chart(
+            fig_inversion,
+            use_container_width=True
+        )
+              st.caption(
             "Las tasas utilizadas son estimativas y sirven para simular escenarios. "
             "No constituyen asesoramiento financiero profesional."
         )
 
-        st.success("Gracias por usar Ruta Ahorro 💰")       
+        st.success("Gracias por usar Ruta Ahorro 💰")
