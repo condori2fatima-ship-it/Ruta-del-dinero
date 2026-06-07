@@ -681,7 +681,7 @@ if st.button("Calcular mi plan de ahorro"):
             fig_inversion,
             use_container_width=True
         )
-              st.caption(
+        st.caption(
             "Las tasas utilizadas son estimativas y sirven para simular escenarios. "
             "No constituyen asesoramiento financiero profesional."
         )
