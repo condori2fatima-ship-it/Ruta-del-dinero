@@ -344,35 +344,35 @@ else:
     st.divider()
     # ---------------- DIAGNÓSTICO ----------------
 
-        st.markdown('<div class="section-title">✅ Diagnóstico financiero</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">✅ Diagnóstico financiero</div>', unsafe_allow_html=True)
 
-        if gastos_mensuales > ingreso_mensual:
+    if gastos_mensuales > ingreso_mensual:
             st.error("Tus gastos son mayores que tus ingresos. Primero necesitás ordenar tus finanzas.")
-        elif dinero_disponible <= 0:
+    elif dinero_disponible <= 0:
             st.error("Actualmente no tenés dinero disponible para ahorrar.")
-        elif dinero_disponible < ahorro_segun_porcentaje:
+    elif dinero_disponible < ahorro_segun_porcentaje:
             st.warning("El porcentaje de ahorro elegido supera tu dinero disponible mensual.")
             st.write("Reducí el porcentaje de ahorro o revisá tus gastos.")
-        elif ahorro_segun_porcentaje >= ahorro_necesario:
+    elif ahorro_segun_porcentaje >= ahorro_necesario:
             st.success("Con el porcentaje de ahorro elegido, tu objetivo es viable.")
-        else:
+    else:
             st.error("Con el porcentaje de ahorro elegido, no llegarías al objetivo en el plazo planteado.")
             st.write("Podés aumentar el ahorro, extender el plazo o reducir el monto objetivo.")
 
-        if porcentaje_necesario <= 20:
+    if porcentaje_necesario <= 20:
             st.success("El esfuerzo requerido es bajo o moderado.")
-        elif porcentaje_necesario <= 40:
+    elif porcentaje_necesario <= 40:
             st.warning("El esfuerzo requerido es alto.")
-        else:
+    else:
             st.error("El esfuerzo requerido es muy alto.")
 
-        st.divider()
+    st.divider()
 
-        # ---------------- HOJA DE RUTA ----------------
+    # ---------------- HOJA DE RUTA ----------------
 
-        st.markdown('<div class="section-title">🗺️ Hoja de ruta por etapas</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🗺️ Hoja de ruta por etapas</div>', unsafe_allow_html=True)
 
-        if dinero_disponible <= 0:
+    if dinero_disponible <= 0:
             etapa = "Ordenar gastos"
             pasos = [
                 "Revisar gastos fijos.",
@@ -380,7 +380,7 @@ else:
                 "Evitar tomar nueva deuda.",
                 "Buscar generar un margen mensual positivo."
             ]
-        elif dinero_disponible < ahorro_necesario:
+    elif dinero_disponible < ahorro_necesario:
             etapa = "Ajustar capacidad de ahorro"
             pasos = [
                 "Reducir gastos variables.",
@@ -388,7 +388,7 @@ else:
                 "Extender el plazo del objetivo.",
                 "Revisar si el monto objetivo es realista."
             ]
-        elif perfil == "Conservador":
+    elif perfil == "Conservador":
             etapa = "Ahorrar de forma segura"
             pasos = [
                 "Separar el ahorro apenas cobrás.",
@@ -396,7 +396,7 @@ else:
                 "Usar instrumentos de bajo riesgo.",
                 "Revisar el avance mes a mes."
             ]
-        else:
+    else:
             etapa = "Ahorrar e invertir"
             pasos = [
                 "Separar el ahorro mensual definido.",
@@ -405,21 +405,21 @@ else:
                 "Comparar rendimiento esperado contra el objetivo."
             ]
 
-        st.info(f"**Etapa detectada:** {etapa}")
+    st.info(f"**Etapa detectada:** {etapa}")
 
-        for i, paso in enumerate(pasos, start=1):
+    for i, paso in enumerate(pasos, start=1):
             st.write(f"{i}. {paso}")
 
-        st.divider()
+    st.divider()
 
-        # ---------------- SIMULADOR ----------------
+    # ---------------- SIMULADOR ----------------
 
-        st.markdown(
+    st.markdown(
             '<div class="section-title">📊 Simulador de escenarios</div>',
             unsafe_allow_html=True
         )
 
-        st.sidebar.header("🎛️ Centro de simulación")
+    st.sidebar.header("🎛️ Centro de simulación")
 
         escenario_ahorro_extra = st.sidebar.slider(
             "Aumentar ahorro mensual (%)",
@@ -460,12 +460,12 @@ else:
 
         nuevo_disponible = nuevo_ingreso - gastos_reducidos
 
-        st.write(
+    st.write(
             "**Ahorro mensual con aumento simulado:**",
             formato_moneda(ahorro_extra, simbolo)
         )
 
-        st.write(
+    st.write(
             "**Dinero disponible si reducís gastos:**",
             formato_moneda(nuevo_disponible, simbolo)
         )
@@ -530,12 +530,12 @@ else:
             unsafe_allow_html=True
         )
 
-      if ahorro_necesario > 0:
+    if ahorro_necesario > 0:
     probabilidad = min(
         int((ahorro_extra / ahorro_necesario) * 100),
         100
     )
-else:
+    else:
     probabilidad = 0
 
         st.progress(probabilidad)
@@ -544,18 +544,18 @@ else:
             f"Probabilidad estimada de alcanzar el objetivo: {probabilidad}%"
         )
 
-        if probabilidad >= 100:
+    if probabilidad >= 100:
             st.success("Alta probabilidad de éxito.")
-        elif probabilidad >= 70:
+    elif probabilidad >= 70:
             st.warning("Probabilidad moderada.")
-        else:
+    else:
             st.error("Probabilidad baja.")
 
-        st.divider()
+    st.divider()
 
-        # ---------------- COMPARACIÓN ----------------
+    # ---------------- COMPARACIÓN ----------------
 
-        st.markdown(
+    st.markdown(
             '<div class="section-title">📊 Comparación mensual</div>',
             unsafe_allow_html=True
         )
@@ -599,15 +599,15 @@ else:
             yaxis_title=f"Monto ({simbolo})"
         )
 
-        st.plotly_chart(
+    st.plotly_chart(
             fig_bar,
             use_container_width=True
         )
 
-        st.divider()
-        # ---------------- INVERSIÓN ----------------
+    st.divider()
+    # ---------------- INVERSIÓN ----------------
 
-        st.markdown(
+    st.markdown(
             '<div class="section-title">📈 Inversión según perfil y mercado</div>',
             unsafe_allow_html=True
         )
@@ -619,7 +619,7 @@ else:
             "Bonos": 0.55,
             "CEDEARs / Acciones": 0.75
         }
-        if perfil == "Conservador":
+    if perfil == "Conservador":
             opciones_recomendadas = [
                 "Billetera remunerada",
                 "Plazo fijo",
@@ -627,14 +627,14 @@ else:
             ]
             descripcion_perfil = "Tu perfil prioriza estabilidad y menor riesgo."
 
-        elif perfil == "Moderado":
+    elif perfil == "Moderado":
             opciones_recomendadas = [
                 "Fondo común conservador",
                 "Bonos"
             ]
             descripcion_perfil = "Tu perfil acepta cierto riesgo a cambio de mayor rendimiento."
 
-        else:
+    else:
             opciones_recomendadas = [
                 "Bonos",
                 "CEDEARs / Acciones"
@@ -761,13 +761,13 @@ else:
             hovermode="x unified"
         )
 
-        st.plotly_chart(
+    st.plotly_chart(
             fig_inversion,
             use_container_width=True
         )
-        st.caption(
+    st.caption(
             "Las tasas utilizadas son estimativas y sirven para simular escenarios. "
             "No constituyen asesoramiento financiero profesional."
         )
 
-        st.success("Gracias por usar Ruta Ahorro 💰")
+    st.success("Gracias por usar Ruta Ahorro 💰")
