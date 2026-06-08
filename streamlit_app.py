@@ -598,12 +598,12 @@ st.markdown(
     unsafe_allow_html=True
     )
 
-    tasas_mercado = {
-        "Billetera remunerada": 0.28,
-        "Plazo fijo": 0.32,
-        "Fondo común conservador": 0.40,
-        "Bonos": 0.55,
-        "CEDEARs / Acciones": 0.75
+tasas_mercado = {
+    "Billetera remunerada": 0.28,
+    "Plazo fijo": 0.32,
+    "Fondo común conservador": 0.40,
+    "Bonos": 0.55,
+    "CEDEARs / Acciones": 0.75
     }
 if perfil == "Conservador":
         opciones_recomendadas = [
