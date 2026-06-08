@@ -17,37 +17,44 @@ if "calculado" not in st.session_state:
 
 st.markdown("""
 <style>
+
+/* Fondo general */
 .stApp {
-    background-color: #f5f1ea;
+    background-color: var(--background-color);
 }
 
+/* Título principal */
 .main-title {
     font-size: 42px;
     font-weight: 800;
-    color: #1f1f1f;
+    color: var(--text-color);
     margin-bottom: 5px;
 }
 
+/* Subtítulo */
 .subtitle {
     font-size: 20px;
-    color: #555;
+    color: var(--text-color);
+    opacity: 0.8;
     margin-bottom: 30px;
 }
 
+/* Cards */
 .card {
-    background-color: #ffffff;
+    background-color: var(--secondary-background-color);
     padding: 28px;
     border-radius: 18px;
-    border: 1px solid #e2ded8;
+    border: 1px solid rgba(128,128,128,0.2);
     box-shadow: 0px 4px 12px rgba(0,0,0,0.04);
     min-height: 250px;
 }
 
+/* Iconos */
 .icon-box {
     width: 58px;
     height: 58px;
     border-radius: 12px;
-    background-color: #e6f7ef;
+    background-color: rgba(76,175,80,0.15);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -55,23 +62,50 @@ st.markdown("""
     margin-bottom: 18px;
 }
 
+/* Títulos dentro de cards */
 .card h3 {
-    color: #111;
+    color: var(--text-color);
     font-size: 22px;
     margin-bottom: 14px;
 }
 
+/* Texto dentro de cards */
 .card p {
-    color: #4d4d4d;
+    color: var(--text-color);
+    opacity: 0.85;
     font-size: 17px;
     line-height: 1.7;
 }
 
+/* Títulos de sección */
 .section-title {
     font-size: 28px;
     font-weight: 700;
+    color: var(--text-color);
     margin-top: 30px;
     margin-bottom: 15px;
+}
+
+/* Métricas */
+[data-testid="stMetric"] {
+    background-color: var(--secondary-background-color);
+    padding: 15px;
+    border-radius: 15px;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: var(--secondary-background-color);
+}
+
+/* Dataframes */
+[data-testid="stDataFrame"] {
+    border-radius: 12px;
+}
+
+/* Plotly */
+.js-plotly-plot {
+    border-radius: 15px;
 }
 
 </style>
