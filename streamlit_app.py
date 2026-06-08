@@ -315,7 +315,7 @@ else:
     st.write("**Porcentaje disponible actual:**", round(porcentaje_ahorro_disponible, 2), "%")
     st.write("**Meses estimados con el porcentaje elegido:**", round(meses_estimados, 1), "meses")
 
-        st.divider()
+    st.divider()
 
         # ---------------- DIAGNÓSTICO ----------------
 
