@@ -629,123 +629,123 @@ else:
 
 st.write(descripcion_perfil)
 
-    resultados_inversion = []
-    mejor_opcion = None
-    mejor_monto = 0
-    mejor_tasa = 0
+resultados_inversion = []
+mejor_opcion = None
+mejor_monto = 0
+mejor_tasa = 0
 
-    for opcion in opciones_recomendadas:
-        tasa_anual = tasas_mercado[opcion]
-        monto_proyectado = calcular_monto_invertido(
-            ahorro_segun_porcentaje,
-            tasa_anual,
-            plazo_meses
-        )
-
-        resultados_inversion.append({
-            "Instrumento": opcion,
-            "Tasa anual estimada": round(tasa_anual * 100, 2),
-            "Monto proyectado": monto_proyectado
-        })
-
-        if monto_proyectado > mejor_monto:
-            mejor_monto = monto_proyectado
-            mejor_opcion = opcion
-            mejor_tasa = tasa_anual
-
-    tabla_resultados = pd.DataFrame(resultados_inversion)
-
-    tabla_mostrar = tabla_resultados.copy()
-    tabla_mostrar["Tasa anual estimada"] = tabla_mostrar["Tasa anual estimada"].apply(lambda x: f"{x}%")
-    tabla_mostrar["Monto proyectado"] = tabla_mostrar["Monto proyectado"].apply(lambda x: formato_moneda(x, simbolo))
-
-    st.dataframe(tabla_mostrar, use_container_width=True)
-
-    st.success(
-        f"Según tu perfil y las tasas estimadas de mercado, la alternativa más conveniente sería: **{mejor_opcion}**."
+for opcion in opciones_recomendadas:
+    tasa_anual = tasas_mercado[opcion]
+    monto_proyectado = calcular_monto_invertido(
+        ahorro_segun_porcentaje,
+        tasa_anual,
+        plazo_meses
     )
 
-    st.write("**Tasa anual estimada:**", round(mejor_tasa * 100, 2), "%")
-    st.write("**Monto proyectado al final del plazo:**", formato_moneda(mejor_monto, simbolo))
-
-    if mejor_monto >= monto_objetivo:
-        st.success("Con esta alternativa podrías alcanzar tu objetivo financiero.")
-    else:
-        st.warning("Incluso con esta alternativa, no alcanzarías el objetivo en el plazo planteado.")
-
-    tasa_mensual_mejor = (1 + mejor_tasa) ** (1 / 12) - 1
-
-    ahorro_sin_invertir = []
-    ahorro_con_inversion = []
-
-    acumulado_simple = 0
-    acumulado_invertido = 0
-
-    for mes in meses:
-        acumulado_simple += ahorro_segun_porcentaje
-        acumulado_invertido = (acumulado_invertido + ahorro_segun_porcentaje) * (1 + tasa_mensual_mejor)
-
-        ahorro_sin_invertir.append(acumulado_simple)
-        ahorro_con_inversion.append(acumulado_invertido)
-
-    datos_inversion = pd.DataFrame({
-        "Mes": meses,
-        "Ahorro sin invertir": ahorro_sin_invertir,
-        "Ahorro invertido": ahorro_con_inversion,
-        "Objetivo": [monto_objetivo] * plazo_meses
+    resultados_inversion.append({
+        "Instrumento": opcion,
+        "Tasa anual estimada": round(tasa_anual * 100, 2),
+        "Monto proyectado": monto_proyectado
     })
 
-    fig_inversion = go.Figure()
+    if monto_proyectado > mejor_monto:
+        mejor_monto = monto_proyectado
+        mejor_opcion = opcion
+        mejor_tasa = tasa_anual
 
-    fig_inversion.add_trace(
-        go.Scatter(
-            x=datos_inversion["Mes"],
-            y=datos_inversion["Ahorro sin invertir"],
-            mode="lines",
-            name="Ahorro sin invertir",
-            line=dict(
-                color="#6C757D",
-                width=3
-            )
+tabla_resultados = pd.DataFrame(resultados_inversion)
+
+tabla_mostrar = tabla_resultados.copy()
+tabla_mostrar["Tasa anual estimada"] = tabla_mostrar["Tasa anual estimada"].apply(lambda x: f"{x}%")
+tabla_mostrar["Monto proyectado"] = tabla_mostrar["Monto proyectado"].apply(lambda x: formato_moneda(x, simbolo))
+
+st.dataframe(tabla_mostrar, use_container_width=True)
+
+st.success(
+    f"Según tu perfil y las tasas estimadas de mercado, la alternativa más conveniente sería: **{mejor_opcion}**."
+)
+
+st.write("**Tasa anual estimada:**", round(mejor_tasa * 100, 2), "%")
+st.write("**Monto proyectado al final del plazo:**", formato_moneda(mejor_monto, simbolo))
+
+if mejor_monto >= monto_objetivo:
+    st.success("Con esta alternativa podrías alcanzar tu objetivo financiero.")
+else:
+    st.warning("Incluso con esta alternativa, no alcanzarías el objetivo en el plazo planteado.")
+
+tasa_mensual_mejor = (1 + mejor_tasa) ** (1 / 12) - 1
+
+ahorro_sin_invertir = []
+ahorro_con_inversion = []
+
+acumulado_simple = 0
+acumulado_invertido = 0
+
+for mes in meses:
+    acumulado_simple += ahorro_segun_porcentaje
+    acumulado_invertido = (acumulado_invertido + ahorro_segun_porcentaje) * (1 + tasa_mensual_mejor)
+
+    ahorro_sin_invertir.append(acumulado_simple)
+    ahorro_con_inversion.append(acumulado_invertido)
+
+datos_inversion = pd.DataFrame({
+    "Mes": meses,
+    "Ahorro sin invertir": ahorro_sin_invertir,
+    "Ahorro invertido": ahorro_con_inversion,
+    "Objetivo": [monto_objetivo] * plazo_meses
+})
+
+fig_inversion = go.Figure()
+
+fig_inversion.add_trace(
+    go.Scatter(
+        x=datos_inversion["Mes"],
+        y=datos_inversion["Ahorro sin invertir"],
+        mode="lines",
+        name="Ahorro sin invertir",
+        line=dict(
+            color="#6C757D",
+            width=3
         )
     )
+)
 
-    fig_inversion.add_trace(
-        go.Scatter(
-            x=datos_inversion["Mes"],
-            y=datos_inversion["Ahorro invertido"],
-            mode="lines",
-            name="Ahorro invertido",
-            line=dict(
-                color="#D4A373",
-                width=4
-            )
+fig_inversion.add_trace(
+    go.Scatter(
+        x=datos_inversion["Mes"],
+        y=datos_inversion["Ahorro invertido"],
+        mode="lines",
+        name="Ahorro invertido",
+        line=dict(
+            color="#D4A373",
+            width=4
         )
     )
+)
 
-    fig_inversion.add_trace(
-        go.Scatter(
-            x=datos_inversion["Mes"],
-            y=datos_inversion["Objetivo"],
-            mode="lines",
-            name="Objetivo",
-            line=dict(
-                color="#2E8B57",
-                width=3,
-                dash="dash"
-            )
+fig_inversion.add_trace(
+    go.Scatter(
+        x=datos_inversion["Mes"],
+        y=datos_inversion["Objetivo"],
+        mode="lines",
+        name="Objetivo",
+        line=dict(
+            color="#2E8B57",
+            width=3,
+            dash="dash"
         )
     )
+)
 
-    fig_inversion.update_layout(
-        title="Evolución del ahorro con inversión",
-        paper_bgcolor="#f5f1ea",
-        plot_bgcolor="#ffffff",
-        height=550,
-        xaxis_title="Mes",
-        yaxis_title=f"Monto ({simbolo})",
-        hovermode="x unified"
-    )
+fig_inversion.update_layout(
+    title="Evolución del ahorro con inversión",
+    paper_bgcolor="#f5f1ea",
+    plot_bgcolor="#ffffff",
+    height=550,
+    xaxis_title="Mes",
+    yaxis_title=f"Monto ({simbolo})",
+    hovermode="x unified"
+)
 
 st.plotly_chart(
         fig_inversion,
