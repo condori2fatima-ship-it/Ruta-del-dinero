@@ -627,7 +627,7 @@ else:
         ]
         descripcion_perfil = "Tu perfil acepta mayor volatilidad buscando rendimientos superiores."
 
-    st.write(descripcion_perfil)
+st.write(descripcion_perfil)
 
     resultados_inversion = []
     mejor_opcion = None
