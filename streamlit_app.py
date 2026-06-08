@@ -561,29 +561,29 @@ datos_comparacion = pd.DataFrame({
     ]
     })
 
-    fig_bar = go.Figure()
+fig_bar = go.Figure()
 
-    fig_bar.add_trace(
-        go.Bar(
-            x=datos_comparacion["Concepto"],
-            y=datos_comparacion["Monto"],
-            text=[
-                formato_moneda(valor, simbolo)
-                for valor in datos_comparacion["Monto"]
-            ],
-            textposition="outside",
-            name="Monto"
-        )
+fig_bar.add_trace(
+    go.Bar(
+        x=datos_comparacion["Concepto"],
+        y=datos_comparacion["Monto"],
+        text=[
+            formato_moneda(valor, simbolo)
+            for valor in datos_comparacion["Monto"]
+        ],
+        textposition="outside",
+        name="Monto"
     )
+)
 
-    fig_bar.update_layout(
-        title="Comparación financiera mensual",
-        paper_bgcolor="#f5f1ea",
-        plot_bgcolor="#ffffff",
-        height=500,
-        xaxis_title="Concepto",
-        yaxis_title=f"Monto ({simbolo})"
-    )
+fig_bar.update_layout(
+    title="Comparación financiera mensual",
+    paper_bgcolor="#f5f1ea",
+    plot_bgcolor="#ffffff",
+    height=500,
+    xaxis_title="Concepto",
+    yaxis_title=f"Monto ({simbolo})"
+)
 
 st.plotly_chart(
     fig_bar,
