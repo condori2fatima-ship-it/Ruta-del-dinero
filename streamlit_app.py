@@ -289,7 +289,7 @@ st.markdown(
         unsafe_allow_html=True
     )
     
-    col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4 = st.columns(4)
     
     col1.metric("Monto objetivo", formato_moneda(monto_objetivo, simbolo))
     col2.metric("Ahorro necesario", formato_moneda(ahorro_necesario, simbolo))
