@@ -546,19 +546,19 @@ st.markdown(
         unsafe_allow_html=True
     )
 
-    datos_comparacion = pd.DataFrame({
-        "Concepto": [
-            "Ahorro necesario",
-            "Ahorro elegido",
-            "Dinero disponible",
-            "Ahorro con mejora"
-        ],
-        "Monto": [
-            ahorro_necesario,
-            ahorro_segun_porcentaje,
-            dinero_disponible,
-            ahorro_extra
-        ]
+datos_comparacion = pd.DataFrame({
+    "Concepto": [
+        "Ahorro necesario",
+        "Ahorro elegido",
+        "Dinero disponible",
+        "Ahorro con mejora"
+    ],
+    "Monto": [
+        ahorro_necesario,
+        ahorro_segun_porcentaje,
+        dinero_disponible,
+        ahorro_extra
+    ]
     })
 
     fig_bar = go.Figure()
