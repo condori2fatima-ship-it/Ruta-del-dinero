@@ -517,7 +517,7 @@ st.markdown(
 )
 
 if ahorro_necesario > 0:
-probabilidad = min(
+    probabilidad = min(
     int((ahorro_extra / ahorro_necesario) * 100),
     100
 )
