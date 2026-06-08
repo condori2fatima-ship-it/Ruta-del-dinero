@@ -310,10 +310,10 @@ else:
     col3.metric("Disponible mensual", formato_moneda(dinero_disponible, simbolo))
     col4.metric("Ahorro elegido", formato_moneda(ahorro_segun_porcentaje, simbolo))
 
-        st.write("**Objetivo:**", objetivo)
-        st.write("**Porcentaje necesario para cumplir el objetivo:**", round(porcentaje_necesario, 2), "%")
-        st.write("**Porcentaje disponible actual:**", round(porcentaje_ahorro_disponible, 2), "%")
-        st.write("**Meses estimados con el porcentaje elegido:**", round(meses_estimados, 1), "meses")
+    st.write("**Objetivo:**", objetivo)
+    st.write("**Porcentaje necesario para cumplir el objetivo:**", round(porcentaje_necesario, 2), "%")
+    st.write("**Porcentaje disponible actual:**", round(porcentaje_ahorro_disponible, 2), "%")
+    st.write("**Meses estimados con el porcentaje elegido:**", round(meses_estimados, 1), "meses")
 
         st.divider()
 
