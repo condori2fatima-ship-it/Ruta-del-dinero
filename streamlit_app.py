@@ -471,50 +471,50 @@ datos_proyeccion = pd.DataFrame({
     "Objetivo": [monto_objetivo] * plazo_meses
 })
 
-    fig = go.Figure()
+fig = go.Figure()
 
-    fig.add_trace(
-        go.Scatter(
-            x=datos_proyeccion["Mes"],
-            y=datos_proyeccion["Ahorro actual"],
-            mode="lines",
-            name="Ahorro actual"
-        )
+fig.add_trace(
+    go.Scatter(
+        x=datos_proyeccion["Mes"],
+        y=datos_proyeccion["Ahorro actual"],
+        mode="lines",
+        name="Ahorro actual"
     )
+)
 
-    fig.add_trace(
-        go.Scatter(
-            x=datos_proyeccion["Mes"],
-            y=datos_proyeccion["Ahorro con mejora"],
-            mode="lines",
-            name="Escenario mejorado"
-        )
+fig.add_trace(
+    go.Scatter(
+        x=datos_proyeccion["Mes"],
+        y=datos_proyeccion["Ahorro con mejora"],
+        mode="lines",
+        name="Escenario mejorado"
     )
+)
 
-    fig.add_trace(
-        go.Scatter(
-            x=datos_proyeccion["Mes"],
-            y=datos_proyeccion["Objetivo"],
-            mode="lines",
-            name="Objetivo"
-        )
+fig.add_trace(
+    go.Scatter(
+        x=datos_proyeccion["Mes"],
+        y=datos_proyeccion["Objetivo"],
+        mode="lines",
+        name="Objetivo"
     )
+)
 
-    fig.update_layout(
-        paper_bgcolor="#f5f1ea",
-        plot_bgcolor="#ffffff",
-        height=500
-    )
+fig.update_layout(
+    paper_bgcolor="#f5f1ea",
+    plot_bgcolor="#ffffff",
+    height=500
+)
 
-    st.plotly_chart(
-        fig,
-        use_container_width=True
-    )
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
 
-    st.markdown(
-        '<div class="section-title">🎯 Probabilidad de éxito</div>',
-        unsafe_allow_html=True
-    )
+st.markdown(
+    '<div class="section-title">🎯 Probabilidad de éxito</div>',
+    unsafe_allow_html=True
+)
 
 if ahorro_necesario > 0:
 probabilidad = min(
