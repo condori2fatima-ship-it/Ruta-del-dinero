@@ -522,7 +522,7 @@ if ahorro_necesario > 0:
     100
 )
 else:
-probabilidad = 0
+    probabilidad = 0
 
     st.progress(probabilidad)
 
