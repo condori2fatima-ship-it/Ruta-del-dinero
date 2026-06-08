@@ -537,7 +537,7 @@ elif probabilidad >= 70:
 else:
         st.error("Probabilidad baja.")
 
-    st.divider()
+st.divider()
 
 # ---------------- COMPARACIÓN ----------------
 
