@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import math
 import plotly.graph_objects as go
+import plotly.express as px
 
 # ---------------- CONFIGURACIÓN ----------------
 
@@ -250,6 +251,8 @@ st.divider()
 if st.button("Calcular mi plan de ahorro"):
     st.session_state.calculado = True
 
+if st.session_state.calculado:
+        
     st.session_state.objetivo = objetivo
     st.session_state.monto_objetivo = monto_objetivo
     st.session_state.plazo_meses = plazo_meses
@@ -258,30 +261,49 @@ if st.button("Calcular mi plan de ahorro"):
     st.session_state.perfil = perfil
     st.session_state.simbolo = simbolo
 
-    if objetivo.strip() == "":
-        st.error("Por favor ingresá un objetivo de ahorro.")
+   if objetivo.strip() == "":
+    st.error("Por favor ingresá un objetivo de ahorro.")
 
-    elif monto_objetivo <= 0:
-        st.error("El monto objetivo debe ser mayor a 0.")
+elif monto_objetivo <= 0:
+    st.error("El monto objetivo debe ser mayor a 0.")
 
-    elif ingreso_mensual <= 0:
-        st.error("El ingreso mensual debe ser mayor a 0.")
+elif ingreso_mensual <= 0:
+    st.error("El ingreso mensual debe ser mayor a 0.")
 
-    else:
-        dinero_disponible = ingreso_mensual - gastos_mensuales
-        ahorro_necesario = monto_objetivo / plazo_meses
-        ahorro_segun_porcentaje = ingreso_mensual * (porcentaje_ahorro_elegido / 100)
+else:
 
-        porcentaje_ahorro_disponible = (dinero_disponible / ingreso_mensual) * 100
-        porcentaje_necesario = (ahorro_necesario / ingreso_mensual) * 100
+    dinero_disponible = ingreso_mensual - gastos_mensuales
 
-        meses_estimados = monto_objetivo / ahorro_segun_porcentaje
+    ahorro_necesario = (
+        monto_objetivo / plazo_meses
+    )
 
-        # ---------------- RESULTADOS ----------------
+    ahorro_segun_porcentaje = (
+        ingreso_mensual *
+        (porcentaje_ahorro_elegido / 100)
+    )
 
-        st.markdown('<div class="section-title">🎯 Plan de ahorro personalizado</div>', unsafe_allow_html=True)
+    porcentaje_ahorro_disponible = (
+        dinero_disponible / ingreso_mensual
+    ) * 100
 
-        col1, col2, col3, col4 = st.columns(4)
+    porcentaje_necesario = (
+        ahorro_necesario / ingreso_mensual
+    ) * 100
+
+    meses_estimados = (
+        monto_objetivo /
+        ahorro_segun_porcentaje
+    )
+
+    # ---------------- RESULTADOS ----------------
+
+    st.markdown(
+        '<div class="section-title">🎯 Plan de ahorro personalizado</div>',
+        unsafe_allow_html=True
+    )
+
+    col1, col2, col3, col4 = st.columns(4)
 
         col1.metric("Monto objetivo", formato_moneda(monto_objetivo, simbolo))
         col2.metric("Ahorro necesario", formato_moneda(ahorro_necesario, simbolo))
@@ -483,10 +505,13 @@ if st.button("Calcular mi plan de ahorro"):
             unsafe_allow_html=True
         )
 
-        probabilidad = min(
-            int((ahorro_extra / ahorro_necesario) * 100),
-            100
-        )
+      if ahorro_necesario > 0:
+    probabilidad = min(
+        int((ahorro_extra / ahorro_necesario) * 100),
+        100
+    )
+else:
+    probabilidad = 0
 
         st.progress(probabilidad)
 
