@@ -458,18 +458,18 @@ formato_moneda(nuevo_disponible, simbolo)
 
 meses = list(range(1, plazo_meses + 1))
 
-    datos_proyeccion = pd.DataFrame({
-        "Mes": meses,
-        "Ahorro actual": [
-            ahorro_segun_porcentaje * mes
-            for mes in meses
-        ],
-        "Ahorro con mejora": [
-            ahorro_extra * mes
-            for mes in meses
-        ],
-        "Objetivo": [monto_objetivo] * plazo_meses
-    })
+datos_proyeccion = pd.DataFrame({
+    "Mes": meses,
+    "Ahorro actual": [
+        ahorro_segun_porcentaje * mes
+        for mes in meses
+    ],
+    "Ahorro con mejora": [
+        ahorro_extra * mes
+        for mes in meses
+    ],
+    "Objetivo": [monto_objetivo] * plazo_meses
+})
 
     fig = go.Figure()
 
