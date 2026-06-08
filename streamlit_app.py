@@ -327,7 +327,7 @@ elif porcentaje_necesario <= 40:
 else:
         st.error("El esfuerzo requerido es muy alto.")
 
-    st.divider()
+st.divider()
 # ---------------- DIAGNÓSTICO ----------------
 
 st.markdown('<div class="section-title">✅ Diagnóstico financiero</div>', unsafe_allow_html=True)
