@@ -305,27 +305,56 @@ st.divider()
     
 # ---------------- DIAGNÓSTICO ----------------
 
-st.markdown('<div class="section-title">✅ Diagnóstico financiero</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-title">✅ Diagnóstico financiero</div>',
+    unsafe_allow_html=True
+)
 
 if gastos_mensuales > ingreso_mensual:
-        st.error("Tus gastos son mayores que tus ingresos. Primero necesitás ordenar tus finanzas.")
+    st.error(
+        "Tus gastos son mayores que tus ingresos. Primero necesitás ordenar tus finanzas."
+    )
+
 elif dinero_disponible <= 0:
-        st.error("Actualmente no tenés dinero disponible para ahorrar.")
+    st.error(
+        "Actualmente no tenés dinero disponible para ahorrar."
+    )
+
 elif dinero_disponible < ahorro_segun_porcentaje:
-        st.warning("El porcentaje de ahorro elegido supera tu dinero disponible mensual.")
-        st.write("Reducí el porcentaje de ahorro o revisá tus gastos.")
+    st.warning(
+        "El porcentaje de ahorro elegido supera tu dinero disponible mensual."
+    )
+    st.write(
+        "Reducí el porcentaje de ahorro o revisá tus gastos."
+    )
+
 elif ahorro_segun_porcentaje >= ahorro_necesario:
-        st.success("Con el porcentaje de ahorro elegido, tu objetivo es viable.")
+    st.success(
+        "Con el porcentaje de ahorro elegido, tu objetivo es viable."
+    )
+
 else:
-        st.error("Con el porcentaje de ahorro elegido, no llegarías al objetivo en el plazo planteado.")
-        st.write("Podés aumentar el ahorro, extender el plazo o reducir el monto objetivo.")
+    st.error(
+        "Con el porcentaje de ahorro elegido, no llegarías al objetivo en el plazo planteado."
+    )
+    st.write(
+        "Podés aumentar el ahorro, extender el plazo o reducir el monto objetivo."
+    )
 
 if porcentaje_necesario <= 20:
-        st.success("El esfuerzo requerido es bajo o moderado.")
+    st.success(
+        "El esfuerzo requerido es bajo o moderado."
+    )
+
 elif porcentaje_necesario <= 40:
-        st.warning("El esfuerzo requerido es alto.")
+    st.warning(
+        "El esfuerzo requerido es alto."
+    )
+
 else:
-        st.error("El esfuerzo requerido es muy alto.")
+    st.error(
+        "El esfuerzo requerido es muy alto."
+    )
 
 st.divider()
 
