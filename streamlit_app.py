@@ -310,10 +310,10 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-if gastos_mensuales > ingreso_mensual:
-    st.error(
-        "Tus gastos son mayores que tus ingresos. Primero necesitás ordenar tus finanzas."
-    )
+    if gastos_mensuales > ingreso_mensual:
+        st.error(
+            "Tus gastos son mayores que tus ingresos. Primero necesitás ordenar tus finanzas."
+        )
 
     elif dinero_disponible <= 0:
         st.error(
