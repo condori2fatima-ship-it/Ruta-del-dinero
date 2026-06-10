@@ -231,18 +231,18 @@ with col_b:
         format="%.2f"
     )
 
-porcentaje_ahorro_elegido = st.slider(
+    porcentaje_ahorro_elegido = st.slider(
     "¿Qué porcentaje de tu ingreso querés ahorrar por mes?",
     min_value=1,
     max_value=80,
     value=20,
     step=1
-)
+    )
 
-perfil = st.selectbox(
+    perfil = st.selectbox(
     "¿Cuál es tu perfil financiero?",
     ["Conservador", "Moderado", "Arriesgado"]
-)
+    )
 
 st.divider()
 
