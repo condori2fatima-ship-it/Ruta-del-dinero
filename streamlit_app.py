@@ -261,7 +261,7 @@ if st.session_state.calculado:
     st.session_state.perfil = perfil
     st.session_state.simbolo = simbolo
 
-if objetivo.strip() == "":
+    if objetivo.strip() == "":
     st.error("Por favor ingresá un objetivo de ahorro.")
 
     elif monto_objetivo <= 0:
