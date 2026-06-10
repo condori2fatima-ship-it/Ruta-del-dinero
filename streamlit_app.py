@@ -264,37 +264,37 @@ if st.session_state.calculado:
 if objetivo.strip() == "":
     st.error("Por favor ingresá un objetivo de ahorro.")
 
-elif monto_objetivo <= 0:
-    st.error("El monto objetivo debe ser mayor a 0.")
-
-elif ingreso_mensual <= 0:
-    st.error("El ingreso mensual debe ser mayor a 0.")
-
-else:
-
-    dinero_disponible = ingreso_mensual - gastos_mensuales
-    ahorro_necesario = monto_objetivo / plazo_meses
-    ahorro_segun_porcentaje = ingreso_mensual * (porcentaje_ahorro_elegido / 100)
-
-    porcentaje_ahorro_disponible = (dinero_disponible / ingreso_mensual) * 100
-    porcentaje_necesario = (ahorro_necesario / ingreso_mensual) * 100
-
-    meses_estimados = monto_objetivo / ahorro_segun_porcentaje
+    elif monto_objetivo <= 0:
+        st.error("El monto objetivo debe ser mayor a 0.")
+    
+    elif ingreso_mensual <= 0:
+        st.error("El ingreso mensual debe ser mayor a 0.")
+    
+    else:
+    
+        dinero_disponible = ingreso_mensual - gastos_mensuales
+        ahorro_necesario = monto_objetivo / plazo_meses
+        ahorro_segun_porcentaje = ingreso_mensual * (porcentaje_ahorro_elegido / 100)
+    
+        porcentaje_ahorro_disponible = (dinero_disponible / ingreso_mensual) * 100
+        porcentaje_necesario = (ahorro_necesario / ingreso_mensual) * 100
+    
+        meses_estimados = monto_objetivo / ahorro_segun_porcentaje
 
     
 # ---------------- RESULTADOS ----------------
     
-st.markdown(
-        '<div class="section-title">🎯 Plan de ahorro personalizado</div>',
-        unsafe_allow_html=True
-    )
-    
-col1, col2, col3, col4 = st.columns(4)
-    
-col1.metric("Monto objetivo", formato_moneda(monto_objetivo, simbolo))
-col2.metric("Ahorro necesario", formato_moneda(ahorro_necesario, simbolo))
-col3.metric("Disponible mensual", formato_moneda(dinero_disponible, simbolo))
-col4.metric("Ahorro elegido", formato_moneda(ahorro_segun_porcentaje, simbolo))
+    st.markdown(
+            '<div class="section-title">🎯 Plan de ahorro personalizado</div>',
+            unsafe_allow_html=True
+        )
+        
+    col1, col2, col3, col4 = st.columns(4)
+        
+    col1.metric("Monto objetivo", formato_moneda(monto_objetivo, simbolo))
+    col2.metric("Ahorro necesario", formato_moneda(ahorro_necesario, simbolo))
+    col3.metric("Disponible mensual", formato_moneda(dinero_disponible, simbolo))
+    col4.metric("Ahorro elegido", formato_moneda(ahorro_segun_porcentaje, simbolo))
 
 st.write("**Objetivo:**", objetivo)
 st.write("**Porcentaje necesario para cumplir el objetivo:**", round(porcentaje_necesario, 2), "%")
