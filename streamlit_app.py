@@ -272,14 +272,14 @@ elif ingreso_mensual <= 0:
 
 else:
 
-    dinero_disponible = ingreso_mensual - gastos_mensuales
-    ahorro_necesario = monto_objetivo / plazo_meses
-    ahorro_segun_porcentaje = ingreso_mensual * (porcentaje_ahorro_elegido / 100)
+dinero_disponible = ingreso_mensual - gastos_mensuales
+ahorro_necesario = monto_objetivo / plazo_meses
+ahorro_segun_porcentaje = ingreso_mensual * (porcentaje_ahorro_elegido / 100)
 
-    porcentaje_ahorro_disponible = (dinero_disponible / ingreso_mensual) * 100
-    porcentaje_necesario = (ahorro_necesario / ingreso_mensual) * 100
+porcentaje_ahorro_disponible = (dinero_disponible / ingreso_mensual) * 100
+porcentaje_necesario = (ahorro_necesario / ingreso_mensual) * 100
 
-    meses_estimados = monto_objetivo / ahorro_segun_porcentaje
+meses_estimados = monto_objetivo / ahorro_segun_porcentaje
 
     
 # ---------------- RESULTADOS ----------------
