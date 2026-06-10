@@ -291,10 +291,10 @@ st.markdown(
     
 col1, col2, col3, col4 = st.columns(4)
     
-    col1.metric("Monto objetivo", formato_moneda(monto_objetivo, simbolo))
-    col2.metric("Ahorro necesario", formato_moneda(ahorro_necesario, simbolo))
-    col3.metric("Disponible mensual", formato_moneda(dinero_disponible, simbolo))
-    col4.metric("Ahorro elegido", formato_moneda(ahorro_segun_porcentaje, simbolo))
+col1.metric("Monto objetivo", formato_moneda(monto_objetivo, simbolo))
+col2.metric("Ahorro necesario", formato_moneda(ahorro_necesario, simbolo))
+col3.metric("Disponible mensual", formato_moneda(dinero_disponible, simbolo))
+col4.metric("Ahorro elegido", formato_moneda(ahorro_segun_porcentaje, simbolo))
 
 st.write("**Objetivo:**", objetivo)
 st.write("**Porcentaje necesario para cumplir el objetivo:**", round(porcentaje_necesario, 2), "%")
