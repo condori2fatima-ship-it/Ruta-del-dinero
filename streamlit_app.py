@@ -124,10 +124,8 @@ def formato_moneda(valor, simbolo):
 def calcular_monto_invertido(aporte_mensual, tasa_anual, plazo_meses):
     tasa_mensual = (1 + tasa_anual) ** (1 / 12) - 1
     acumulado = 0
-
     for mes in range(1, plazo_meses + 1):
         acumulado = (acumulado + aporte_mensual) * (1 + tasa_mensual)
-
     return acumulado
 
 # ---------------- ENCABEZADO ----------------
@@ -232,16 +230,16 @@ with col_b:
     )
 
     porcentaje_ahorro_elegido = st.slider(
-    "¿Qué porcentaje de tu ingreso querés ahorrar por mes?",
-    min_value=1,
-    max_value=80,
-    value=20,
-    step=1
+        "¿Qué porcentaje de tu ingreso querés ahorrar por mes?",
+        min_value=1,
+        max_value=80,
+        value=20,
+        step=1
     )
 
     perfil = st.selectbox(
-    "¿Cuál es tu perfil financiero?",
-    ["Conservador", "Moderado", "Arriesgado"]
+        "¿Cuál es tu perfil financiero?",
+        ["Conservador", "Moderado", "Arriesgado"]
     )
 
 st.divider()
@@ -252,7 +250,21 @@ if st.button("Calcular mi plan de ahorro"):
     st.session_state.calculado = True
 
 if st.session_state.calculado:
-        
+
+    # Validaciones
+    if objetivo.strip() == "":
+        st.error("Por favor ingresá un objetivo de ahorro.")
+        st.stop()
+
+    if monto_objetivo <= 0:
+        st.error("El monto objetivo debe ser mayor a 0.")
+        st.stop()
+
+    if ingreso_mensual <= 0:
+        st.error("El ingreso mensual debe ser mayor a 0.")
+        st.stop()
+
+    # Guardar en session_state
     st.session_state.objetivo = objetivo
     st.session_state.monto_objetivo = monto_objetivo
     st.session_state.plazo_meses = plazo_meses
@@ -261,36 +273,27 @@ if st.session_state.calculado:
     st.session_state.perfil = perfil
     st.session_state.simbolo = simbolo
 
-    if objetivo.strip() == "":
-        st.error("Por favor ingresá un objetivo de ahorro.")
+    # Cálculos principales
+    dinero_disponible = ingreso_mensual - gastos_mensuales
+    ahorro_necesario = monto_objetivo / plazo_meses
+    ahorro_segun_porcentaje = ingreso_mensual * (porcentaje_ahorro_elegido / 100)
 
-    elif monto_objetivo <= 0:
-        st.error("El monto objetivo debe ser mayor a 0.")
-    
-    elif ingreso_mensual <= 0:
-        st.error("El ingreso mensual debe ser mayor a 0.")
-    
-    else:
-    
-        dinero_disponible = ingreso_mensual - gastos_mensuales
-        ahorro_necesario = monto_objetivo / plazo_meses
-        ahorro_segun_porcentaje = ingreso_mensual * (porcentaje_ahorro_elegido / 100)
-    
-        porcentaje_ahorro_disponible = (dinero_disponible / ingreso_mensual) * 100
-        porcentaje_necesario = (ahorro_necesario / ingreso_mensual) * 100
-    
-        meses_estimados = monto_objetivo / ahorro_segun_porcentaje
+    porcentaje_ahorro_disponible = (dinero_disponible / ingreso_mensual) * 100
+    porcentaje_necesario = (ahorro_necesario / ingreso_mensual) * 100
 
-    
-# ---------------- RESULTADOS ----------------
-    
+    meses_estimados = monto_objetivo / ahorro_segun_porcentaje if ahorro_segun_porcentaje > 0 else float('inf')
+
+    meses = list(range(1, plazo_meses + 1))
+
+    # ---------------- RESULTADOS ----------------
+
     st.markdown(
-            '<div class="section-title">🎯 Plan de ahorro personalizado</div>',
-            unsafe_allow_html=True
-        )
-        
+        '<div class="section-title">🎯 Plan de ahorro personalizado</div>',
+        unsafe_allow_html=True
+    )
+
     col1, col2, col3, col4 = st.columns(4)
-        
+
     col1.metric("Monto objetivo", formato_moneda(monto_objetivo, simbolo))
     col2.metric("Ahorro necesario", formato_moneda(ahorro_necesario, simbolo))
     col3.metric("Disponible mensual", formato_moneda(dinero_disponible, simbolo))
@@ -301,68 +304,46 @@ if st.session_state.calculado:
     st.write("**Porcentaje disponible actual:**", round(porcentaje_ahorro_disponible, 2), "%")
     st.write("**Meses estimados con el porcentaje elegido:**", round(meses_estimados, 1), "meses")
 
-st.divider()
-    
-# ---------------- DIAGNÓSTICO ----------------
+    st.divider()
 
-st.markdown(
-    '<div class="section-title">✅ Diagnóstico financiero</div>',
-    unsafe_allow_html=True
-)
+    # ---------------- DIAGNÓSTICO ----------------
 
-if gastos_mensuales > ingreso_mensual:
-    st.error(
-        "Tus gastos son mayores que tus ingresos. Primero necesitás ordenar tus finanzas."
+    st.markdown(
+        '<div class="section-title">✅ Diagnóstico financiero</div>',
+        unsafe_allow_html=True
     )
 
-elif dinero_disponible <= 0:
-    st.error(
-        "Actualmente no tenés dinero disponible para ahorrar."
-    )
+    if gastos_mensuales > ingreso_mensual:
+        st.error("Tus gastos son mayores que tus ingresos. Primero necesitás ordenar tus finanzas.")
 
-elif dinero_disponible < ahorro_segun_porcentaje:
-    st.warning(
-        "El porcentaje de ahorro elegido supera tu dinero disponible mensual."
-    )
-    st.write(
-        "Reducí el porcentaje de ahorro o revisá tus gastos."
-    )
+    elif dinero_disponible <= 0:
+        st.error("Actualmente no tenés dinero disponible para ahorrar.")
 
-elif ahorro_segun_porcentaje >= ahorro_necesario:
-    st.success(
-        "Con el porcentaje de ahorro elegido, tu objetivo es viable."
-    )
+    elif dinero_disponible < ahorro_segun_porcentaje:
+        st.warning("El porcentaje de ahorro elegido supera tu dinero disponible mensual.")
+        st.write("Reducí el porcentaje de ahorro o revisá tus gastos.")
 
-else:
-    st.error(
-        "Con el porcentaje de ahorro elegido, no llegarías al objetivo en el plazo planteado."
-    )
-    st.write(
-        "Podés aumentar el ahorro, extender el plazo o reducir el monto objetivo."
-    )
+    elif ahorro_segun_porcentaje >= ahorro_necesario:
+        st.success("Con el porcentaje de ahorro elegido, tu objetivo es viable.")
 
-    if porcentaje_necesario <= 20:
-        st.success(
-            "El esfuerzo requerido es bajo o moderado."
-        )
-    
-    elif porcentaje_necesario <= 40:
-        st.warning(
-            "El esfuerzo requerido es alto."
-        )
-    
     else:
-        st.error(
-            "El esfuerzo requerido es muy alto."
-        )
+        st.error("Con el porcentaje de ahorro elegido, no llegarías al objetivo en el plazo planteado.")
+        st.write("Podés aumentar el ahorro, extender el plazo o reducir el monto objetivo.")
 
-st.divider()
+        if porcentaje_necesario <= 20:
+            st.success("El esfuerzo requerido es bajo o moderado.")
+        elif porcentaje_necesario <= 40:
+            st.warning("El esfuerzo requerido es alto.")
+        else:
+            st.error("El esfuerzo requerido es muy alto.")
 
-# ---------------- HOJA DE RUTA ----------------
+    st.divider()
 
-st.markdown('<div class="section-title">🗺️ Hoja de ruta por etapas</div>', unsafe_allow_html=True)
+    # ---------------- HOJA DE RUTA ----------------
 
-if dinero_disponible <= 0:
+    st.markdown('<div class="section-title">🗺️ Hoja de ruta por etapas</div>', unsafe_allow_html=True)
+
+    if dinero_disponible <= 0:
         etapa = "Ordenar gastos"
         pasos = [
             "Revisar gastos fijos.",
@@ -370,7 +351,7 @@ if dinero_disponible <= 0:
             "Evitar tomar nueva deuda.",
             "Buscar generar un margen mensual positivo."
         ]
-elif dinero_disponible < ahorro_necesario:
+    elif dinero_disponible < ahorro_necesario:
         etapa = "Ajustar capacidad de ahorro"
         pasos = [
             "Reducir gastos variables.",
@@ -378,7 +359,7 @@ elif dinero_disponible < ahorro_necesario:
             "Extender el plazo del objetivo.",
             "Revisar si el monto objetivo es realista."
         ]
-elif perfil == "Conservador":
+    elif perfil == "Conservador":
         etapa = "Ahorrar de forma segura"
         pasos = [
             "Separar el ahorro apenas cobrás.",
@@ -386,7 +367,7 @@ elif perfil == "Conservador":
             "Usar instrumentos de bajo riesgo.",
             "Revisar el avance mes a mes."
         ]
-else:
+    else:
         etapa = "Ahorrar e invertir"
         pasos = [
             "Separar el ahorro mensual definido.",
@@ -395,369 +376,299 @@ else:
             "Comparar rendimiento esperado contra el objetivo."
         ]
 
-st.info(f"**Etapa detectada:** {etapa}")
+    st.info(f"**Etapa detectada:** {etapa}")
 
-for i, paso in enumerate(pasos, start=1):
+    for i, paso in enumerate(pasos, start=1):
         st.write(f"{i}. {paso}")
 
-st.divider()
+    st.divider()
 
-# ---------------- SIMULADOR ----------------
+    # ---------------- SIMULADOR ----------------
 
-st.markdown(
+    st.markdown(
         '<div class="section-title">📊 Simulador de escenarios</div>',
         unsafe_allow_html=True
     )
 
-st.sidebar.header("🎛️ Centro de simulación")
+    st.sidebar.header("🎛️ Centro de simulación")
 
-escenario_ahorro_extra = st.sidebar.slider(
-    "Aumentar ahorro mensual (%)",
-    min_value=0,
-    max_value=50,
-    value=10,
-    step=5
+    escenario_ahorro_extra = st.sidebar.slider(
+        "Aumentar ahorro mensual (%)",
+        min_value=0,
+        max_value=50,
+        value=10,
+        step=5
     )
 
-escenario_reduccion_gastos = st.sidebar.slider(
-    "Reducir gastos (%)",
-    min_value=0,
-    max_value=50,
-    value=10,
-    step=5
+    escenario_reduccion_gastos = st.sidebar.slider(
+        "Reducir gastos (%)",
+        min_value=0,
+        max_value=50,
+        value=10,
+        step=5
     )
 
-ingreso_extra = st.sidebar.slider(
-    "Ingreso adicional mensual",
-    min_value=0,
-    max_value=500000,
-    value=0,
-    step=10000
+    ingreso_extra = st.sidebar.slider(
+        "Ingreso adicional mensual",
+        min_value=0,
+        max_value=500000,
+        value=0,
+        step=10000
     )
 
-nuevo_ingreso = ingreso_mensual + ingreso_extra
+    nuevo_ingreso = ingreso_mensual + ingreso_extra
 
-ahorro_extra = (
-nuevo_ingreso *
-(porcentaje_ahorro_elegido / 100)
-) * (
-1 + escenario_ahorro_extra / 100
-)
+    ahorro_extra = (
+        nuevo_ingreso * (porcentaje_ahorro_elegido / 100)
+    ) * (1 + escenario_ahorro_extra / 100)
 
-gastos_reducidos = gastos_mensuales * (
-1 - escenario_reduccion_gastos / 100
-)
+    gastos_reducidos = gastos_mensuales * (1 - escenario_reduccion_gastos / 100)
 
-nuevo_disponible = nuevo_ingreso - gastos_reducidos
+    nuevo_disponible = nuevo_ingreso - gastos_reducidos
 
-st.write(
-"**Ahorro mensual con aumento simulado:**",
-formato_moneda(ahorro_extra, simbolo)
-)
+    st.write("**Ahorro mensual con aumento simulado:**", formato_moneda(ahorro_extra, simbolo))
+    st.write("**Dinero disponible si reducís gastos:**", formato_moneda(nuevo_disponible, simbolo))
 
-st.write(
-"**Dinero disponible si reducís gastos:**",
-formato_moneda(nuevo_disponible, simbolo)
-)
+    datos_proyeccion = pd.DataFrame({
+        "Mes": meses,
+        "Ahorro actual": [ahorro_segun_porcentaje * mes for mes in meses],
+        "Ahorro con mejora": [ahorro_extra * mes for mes in meses],
+        "Objetivo": [monto_objetivo] * plazo_meses
+    })
 
-meses = list(range(1, plazo_meses + 1))
+    fig = go.Figure()
 
-datos_proyeccion = pd.DataFrame({
-    "Mes": meses,
-    "Ahorro actual": [
-        ahorro_segun_porcentaje * mes
-        for mes in meses
-    ],
-    "Ahorro con mejora": [
-        ahorro_extra * mes
-        for mes in meses
-    ],
-    "Objetivo": [monto_objetivo] * plazo_meses
-})
-
-fig = go.Figure()
-
-fig.add_trace(
-    go.Scatter(
+    fig.add_trace(go.Scatter(
         x=datos_proyeccion["Mes"],
         y=datos_proyeccion["Ahorro actual"],
         mode="lines",
         name="Ahorro actual"
-    )
-)
+    ))
 
-fig.add_trace(
-    go.Scatter(
+    fig.add_trace(go.Scatter(
         x=datos_proyeccion["Mes"],
         y=datos_proyeccion["Ahorro con mejora"],
         mode="lines",
         name="Escenario mejorado"
-    )
-)
+    ))
 
-fig.add_trace(
-    go.Scatter(
+    fig.add_trace(go.Scatter(
         x=datos_proyeccion["Mes"],
         y=datos_proyeccion["Objetivo"],
         mode="lines",
         name="Objetivo"
+    ))
+
+    fig.update_layout(
+        paper_bgcolor="#f5f1ea",
+        plot_bgcolor="#ffffff",
+        height=500
     )
-)
 
-fig.update_layout(
-    paper_bgcolor="#f5f1ea",
-    plot_bgcolor="#ffffff",
-    height=500
-)
+    st.plotly_chart(fig, use_container_width=True)
 
-st.plotly_chart(
-    fig,
-    use_container_width=True
-)
+    # ---------------- PROBABILIDAD ----------------
 
-st.markdown(
-    '<div class="section-title">🎯 Probabilidad de éxito</div>',
-    unsafe_allow_html=True
-)
+    st.markdown(
+        '<div class="section-title">🎯 Probabilidad de éxito</div>',
+        unsafe_allow_html=True
+    )
 
-if ahorro_necesario > 0:
-    probabilidad = min(
-    int((ahorro_extra / ahorro_necesario) * 100),
-    100
-)
-else:
-    probabilidad = 0
+    if ahorro_necesario > 0:
+        probabilidad = min(int((ahorro_extra / ahorro_necesario) * 100), 100)
+    else:
+        probabilidad = 0
 
     st.progress(probabilidad)
+    st.write(f"Probabilidad estimada de alcanzar el objetivo: {probabilidad}%")
 
-    st.write(
-        f"Probabilidad estimada de alcanzar el objetivo: {probabilidad}%"
-    )
-
-if probabilidad >= 100:
+    if probabilidad >= 100:
         st.success("Alta probabilidad de éxito.")
-elif probabilidad >= 70:
+    elif probabilidad >= 70:
         st.warning("Probabilidad moderada.")
-else:
+    else:
         st.error("Probabilidad baja.")
 
-st.divider()
+    st.divider()
 
-# ---------------- COMPARACIÓN ----------------
+    # ---------------- COMPARACIÓN ----------------
 
-st.markdown(
+    st.markdown(
         '<div class="section-title">📊 Comparación mensual</div>',
         unsafe_allow_html=True
     )
 
-datos_comparacion = pd.DataFrame({
-    "Concepto": [
-        "Ahorro necesario",
-        "Ahorro elegido",
-        "Dinero disponible",
-        "Ahorro con mejora"
-    ],
-    "Monto": [
-        ahorro_necesario,
-        ahorro_segun_porcentaje,
-        dinero_disponible,
-        ahorro_extra
-    ]
+    datos_comparacion = pd.DataFrame({
+        "Concepto": [
+            "Ahorro necesario",
+            "Ahorro elegido",
+            "Dinero disponible",
+            "Ahorro con mejora"
+        ],
+        "Monto": [
+            ahorro_necesario,
+            ahorro_segun_porcentaje,
+            dinero_disponible,
+            ahorro_extra
+        ]
     })
 
-fig_bar = go.Figure()
+    fig_bar = go.Figure()
 
-fig_bar.add_trace(
-    go.Bar(
+    fig_bar.add_trace(go.Bar(
         x=datos_comparacion["Concepto"],
         y=datos_comparacion["Monto"],
-        text=[
-            formato_moneda(valor, simbolo)
-            for valor in datos_comparacion["Monto"]
-        ],
+        text=[formato_moneda(valor, simbolo) for valor in datos_comparacion["Monto"]],
         textposition="outside",
         name="Monto"
-    )
-)
+    ))
 
-fig_bar.update_layout(
-    title="Comparación financiera mensual",
-    paper_bgcolor="#f5f1ea",
-    plot_bgcolor="#ffffff",
-    height=500,
-    xaxis_title="Concepto",
-    yaxis_title=f"Monto ({simbolo})"
-)
-
-st.plotly_chart(
-    fig_bar,
-    use_container_width=True
+    fig_bar.update_layout(
+        title="Comparación financiera mensual",
+        paper_bgcolor="#f5f1ea",
+        plot_bgcolor="#ffffff",
+        height=500,
+        xaxis_title="Concepto",
+        yaxis_title=f"Monto ({simbolo})"
     )
 
-st.divider()
-# ---------------- INVERSIÓN ----------------
+    st.plotly_chart(fig_bar, use_container_width=True)
 
-st.markdown(
-    '<div class="section-title">📈 Inversión según perfil y mercado</div>',
-    unsafe_allow_html=True
+    st.divider()
+
+    # ---------------- INVERSIÓN ----------------
+
+    st.markdown(
+        '<div class="section-title">📈 Inversión según perfil y mercado</div>',
+        unsafe_allow_html=True
     )
 
-tasas_mercado = {
-    "Billetera remunerada": 0.28,
-    "Plazo fijo": 0.32,
-    "Fondo común conservador": 0.40,
-    "Bonos": 0.55,
-    "CEDEARs / Acciones": 0.75
+    tasas_mercado = {
+        "Billetera remunerada": 0.28,
+        "Plazo fijo": 0.32,
+        "Fondo común conservador": 0.40,
+        "Bonos": 0.55,
+        "CEDEARs / Acciones": 0.75
     }
-if perfil == "Conservador":
-        opciones_recomendadas = [
-            "Billetera remunerada",
-            "Plazo fijo",
-            "Fondo común conservador"
-        ]
+
+    if perfil == "Conservador":
+        opciones_recomendadas = ["Billetera remunerada", "Plazo fijo", "Fondo común conservador"]
         descripcion_perfil = "Tu perfil prioriza estabilidad y menor riesgo."
-
-elif perfil == "Moderado":
-        opciones_recomendadas = [
-            "Fondo común conservador",
-            "Bonos"
-        ]
+    elif perfil == "Moderado":
+        opciones_recomendadas = ["Fondo común conservador", "Bonos"]
         descripcion_perfil = "Tu perfil acepta cierto riesgo a cambio de mayor rendimiento."
-
-else:
-        opciones_recomendadas = [
-            "Bonos",
-            "CEDEARs / Acciones"
-        ]
+    else:
+        opciones_recomendadas = ["Bonos", "CEDEARs / Acciones"]
         descripcion_perfil = "Tu perfil acepta mayor volatilidad buscando rendimientos superiores."
 
-st.write(descripcion_perfil)
+    st.write(descripcion_perfil)
 
-resultados_inversion = []
-mejor_opcion = None
-mejor_monto = 0
-mejor_tasa = 0
+    resultados_inversion = []
+    mejor_opcion = None
+    mejor_monto = 0
+    mejor_tasa = 0
 
-for opcion in opciones_recomendadas:
-    tasa_anual = tasas_mercado[opcion]
-    monto_proyectado = calcular_monto_invertido(
-        ahorro_segun_porcentaje,
-        tasa_anual,
-        plazo_meses
+    for opcion in opciones_recomendadas:
+        tasa_anual = tasas_mercado[opcion]
+        monto_proyectado = calcular_monto_invertido(
+            ahorro_segun_porcentaje,
+            tasa_anual,
+            plazo_meses
+        )
+
+        resultados_inversion.append({
+            "Instrumento": opcion,
+            "Tasa anual estimada": round(tasa_anual * 100, 2),
+            "Monto proyectado": monto_proyectado
+        })
+
+        if monto_proyectado > mejor_monto:
+            mejor_monto = monto_proyectado
+            mejor_opcion = opcion
+            mejor_tasa = tasa_anual
+
+    tabla_resultados = pd.DataFrame(resultados_inversion)
+
+    tabla_mostrar = tabla_resultados.copy()
+    tabla_mostrar["Tasa anual estimada"] = tabla_mostrar["Tasa anual estimada"].apply(lambda x: f"{x}%")
+    tabla_mostrar["Monto proyectado"] = tabla_mostrar["Monto proyectado"].apply(lambda x: formato_moneda(x, simbolo))
+
+    st.dataframe(tabla_mostrar, use_container_width=True)
+
+    st.success(
+        f"Según tu perfil y las tasas estimadas de mercado, la alternativa más conveniente sería: **{mejor_opcion}**."
     )
 
-    resultados_inversion.append({
-        "Instrumento": opcion,
-        "Tasa anual estimada": round(tasa_anual * 100, 2),
-        "Monto proyectado": monto_proyectado
+    st.write("**Tasa anual estimada:**", round(mejor_tasa * 100, 2), "%")
+    st.write("**Monto proyectado al final del plazo:**", formato_moneda(mejor_monto, simbolo))
+
+    if mejor_monto >= monto_objetivo:
+        st.success("Con esta alternativa podrías alcanzar tu objetivo financiero.")
+    else:
+        st.warning("Incluso con esta alternativa, no alcanzarías el objetivo en el plazo planteado.")
+
+    tasa_mensual_mejor = (1 + mejor_tasa) ** (1 / 12) - 1
+
+    ahorro_sin_invertir = []
+    ahorro_con_inversion = []
+
+    acumulado_simple = 0
+    acumulado_invertido = 0
+
+    for mes in meses:
+        acumulado_simple += ahorro_segun_porcentaje
+        acumulado_invertido = (acumulado_invertido + ahorro_segun_porcentaje) * (1 + tasa_mensual_mejor)
+        ahorro_sin_invertir.append(acumulado_simple)
+        ahorro_con_inversion.append(acumulado_invertido)
+
+    datos_inversion = pd.DataFrame({
+        "Mes": meses,
+        "Ahorro sin invertir": ahorro_sin_invertir,
+        "Ahorro invertido": ahorro_con_inversion,
+        "Objetivo": [monto_objetivo] * plazo_meses
     })
 
-    if monto_proyectado > mejor_monto:
-        mejor_monto = monto_proyectado
-        mejor_opcion = opcion
-        mejor_tasa = tasa_anual
+    fig_inversion = go.Figure()
 
-tabla_resultados = pd.DataFrame(resultados_inversion)
-
-tabla_mostrar = tabla_resultados.copy()
-tabla_mostrar["Tasa anual estimada"] = tabla_mostrar["Tasa anual estimada"].apply(lambda x: f"{x}%")
-tabla_mostrar["Monto proyectado"] = tabla_mostrar["Monto proyectado"].apply(lambda x: formato_moneda(x, simbolo))
-
-st.dataframe(tabla_mostrar, use_container_width=True)
-
-st.success(
-    f"Según tu perfil y las tasas estimadas de mercado, la alternativa más conveniente sería: **{mejor_opcion}**."
-)
-
-st.write("**Tasa anual estimada:**", round(mejor_tasa * 100, 2), "%")
-st.write("**Monto proyectado al final del plazo:**", formato_moneda(mejor_monto, simbolo))
-
-if mejor_monto >= monto_objetivo:
-    st.success("Con esta alternativa podrías alcanzar tu objetivo financiero.")
-else:
-    st.warning("Incluso con esta alternativa, no alcanzarías el objetivo en el plazo planteado.")
-
-tasa_mensual_mejor = (1 + mejor_tasa) ** (1 / 12) - 1
-
-ahorro_sin_invertir = []
-ahorro_con_inversion = []
-
-acumulado_simple = 0
-acumulado_invertido = 0
-
-for mes in meses:
-    acumulado_simple += ahorro_segun_porcentaje
-    acumulado_invertido = (acumulado_invertido + ahorro_segun_porcentaje) * (1 + tasa_mensual_mejor)
-
-    ahorro_sin_invertir.append(acumulado_simple)
-    ahorro_con_inversion.append(acumulado_invertido)
-
-datos_inversion = pd.DataFrame({
-    "Mes": meses,
-    "Ahorro sin invertir": ahorro_sin_invertir,
-    "Ahorro invertido": ahorro_con_inversion,
-    "Objetivo": [monto_objetivo] * plazo_meses
-})
-
-fig_inversion = go.Figure()
-
-fig_inversion.add_trace(
-    go.Scatter(
+    fig_inversion.add_trace(go.Scatter(
         x=datos_inversion["Mes"],
         y=datos_inversion["Ahorro sin invertir"],
         mode="lines",
         name="Ahorro sin invertir",
-        line=dict(
-            color="#6C757D",
-            width=3
-        )
-    )
-)
+        line=dict(color="#6C757D", width=3)
+    ))
 
-fig_inversion.add_trace(
-    go.Scatter(
+    fig_inversion.add_trace(go.Scatter(
         x=datos_inversion["Mes"],
         y=datos_inversion["Ahorro invertido"],
         mode="lines",
         name="Ahorro invertido",
-        line=dict(
-            color="#D4A373",
-            width=4
-        )
-    )
-)
+        line=dict(color="#D4A373", width=4)
+    ))
 
-fig_inversion.add_trace(
-    go.Scatter(
+    fig_inversion.add_trace(go.Scatter(
         x=datos_inversion["Mes"],
         y=datos_inversion["Objetivo"],
         mode="lines",
         name="Objetivo",
-        line=dict(
-            color="#2E8B57",
-            width=3,
-            dash="dash"
-        )
-    )
-)
+        line=dict(color="#2E8B57", width=3, dash="dash")
+    ))
 
-fig_inversion.update_layout(
-    title="Evolución del ahorro con inversión",
-    paper_bgcolor="#f5f1ea",
-    plot_bgcolor="#ffffff",
-    height=550,
-    xaxis_title="Mes",
-    yaxis_title=f"Monto ({simbolo})",
-    hovermode="x unified"
-)
-
-st.plotly_chart(
-        fig_inversion,
-        use_container_width=True
+    fig_inversion.update_layout(
+        title="Evolución del ahorro con inversión",
+        paper_bgcolor="#f5f1ea",
+        plot_bgcolor="#ffffff",
+        height=550,
+        xaxis_title="Mes",
+        yaxis_title=f"Monto ({simbolo})",
+        hovermode="x unified"
     )
-st.caption(
+
+    st.plotly_chart(fig_inversion, use_container_width=True)
+
+    st.caption(
         "Las tasas utilizadas son estimativas y sirven para simular escenarios. "
         "No constituyen asesoramiento financiero profesional."
     )
 
-st.success("Gracias por usar Ruta Ahorro 💰")
+    st.success("Gracias por usar Ruta Ahorro 💰")
