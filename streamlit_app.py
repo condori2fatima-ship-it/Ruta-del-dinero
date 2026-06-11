@@ -1,13 +1,11 @@
-python3 -c "
-parts = []
-
-parts.append('''import streamlit as st
+import streamlit as st
 import pandas as pd
+import math
 import plotly.graph_objects as go
-''')
+import plotly.express as px
 
-parts.append('''
-# ---- CONFIGURACION ----
+# ---------------- CONFIGURACIÓN ----------------
+
 st.set_page_config(page_title=\"Ruta Ahorro\", page_icon=\"💰\", layout=\"wide\")
 if \"calculado\" not in st.session_state:
     st.session_state.calculado = False
